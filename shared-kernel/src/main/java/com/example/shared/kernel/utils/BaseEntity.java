@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
@@ -12,23 +12,23 @@ import lombok.Getter;
 public abstract class BaseEntity {
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     protected BaseEntity() {
     }
 
     @PrePersist
     void onPersist() {
-        Instant now = Instant.now();
+        LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
     }
 
     @PreUpdate
     void onUpdate() {
-        this.updatedAt = Instant.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

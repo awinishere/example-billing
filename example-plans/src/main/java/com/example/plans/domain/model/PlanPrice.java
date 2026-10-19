@@ -2,7 +2,7 @@ package com.example.plans.domain.model;
 
 import com.example.plans.extensions.types.BillingPeriod;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ public record PlanPrice(
         Currency currency,
         BillingPeriod billingPeriod,
         boolean active,
-        Instant createdAt,
-        Instant updatedAt) {
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 
     public PlanPrice {
         if (planId == null) {
@@ -34,7 +34,21 @@ public record PlanPrice(
         }
     }
 
-    public static PlanPrice newPrice(UUID planId, BigDecimal amount, Currency currency, BillingPeriod billingPeriod) {
-        return new PlanPrice(null, planId, amount, currency, billingPeriod, true, null, null);
+    public static PlanPrice newPrice(
+            UUID planId,
+            BigDecimal amount,
+            Currency currency,
+            BillingPeriod billingPeriod
+    ) {
+        return new PlanPrice(
+                null,
+                planId,
+                amount,
+                currency,
+                billingPeriod,
+                true,
+                null,
+                null
+        );
     }
 }

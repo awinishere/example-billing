@@ -1,6 +1,6 @@
 package com.example.plans.domain.model;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record Plan(
@@ -9,8 +9,8 @@ public record Plan(
         String name,
         String description,
         boolean active,
-        Instant createdAt,
-        Instant updatedAt) {
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 
     public Plan {
         requireText(code, "code is required");
@@ -18,7 +18,15 @@ public record Plan(
     }
 
     public static Plan newPlan(String code, String name, String description) {
-        return new Plan(null, code, name, description, true, null, null);
+        return new Plan(
+                null,
+                code,
+                name,
+                description,
+                true,
+                null,
+                null
+        );
     }
 
     public Plan inactive() {

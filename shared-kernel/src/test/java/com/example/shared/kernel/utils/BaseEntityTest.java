@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 class BaseEntityTest {
@@ -18,7 +18,7 @@ class BaseEntityTest {
         DemoRow row = new DemoRow();
         assertNull(row.getCreatedAt());
 
-        Instant before = Instant.now();
+        LocalDateTime before = LocalDateTime.now();
         row.onPersist();
 
         assertNotNull(row.getCreatedAt());
@@ -30,8 +30,8 @@ class BaseEntityTest {
     void updateMovesUpdatedAtButNotCreatedAt() throws InterruptedException {
         DemoRow row = new DemoRow();
         row.onPersist();
-        Instant createdAt = row.getCreatedAt();
-        Instant updatedAt = row.getUpdatedAt();
+        LocalDateTime createdAt = row.getCreatedAt();
+        LocalDateTime updatedAt = row.getUpdatedAt();
 
         Thread.sleep(5);
         row.onUpdate();

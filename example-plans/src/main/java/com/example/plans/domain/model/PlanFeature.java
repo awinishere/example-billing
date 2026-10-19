@@ -1,6 +1,6 @@
 package com.example.plans.domain.model;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record PlanFeature(
@@ -9,8 +9,8 @@ public record PlanFeature(
         UUID featureId,
         boolean included,
         Integer quantity,
-        Instant createdAt,
-        Instant updatedAt) {
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 
     public PlanFeature {
         if (planId == null || featureId == null) {
@@ -21,7 +21,20 @@ public record PlanFeature(
         }
     }
 
-    public static PlanFeature newPlanFeature(UUID planId, UUID featureId, boolean included, Integer quantity) {
-        return new PlanFeature(null, planId, featureId, included, quantity, null, null);
+    public static PlanFeature newPlanFeature(
+            UUID planId,
+            UUID featureId,
+            boolean included,
+            Integer quantity
+    ) {
+        return new PlanFeature(
+                null,
+                planId,
+                featureId,
+                included,
+                quantity,
+                null,
+                null
+        );
     }
 }
