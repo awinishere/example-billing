@@ -1,0 +1,6 @@
+name: rollout-week1
+owner: platform-team
+steps:
+  - backup database
+  - deploy canary
+  - smoke test

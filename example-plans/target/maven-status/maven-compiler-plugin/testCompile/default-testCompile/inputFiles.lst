@@ -1,0 +1,5 @@
+/home/awn/Documents/root/example-plans/src/test/java/com/example/plans/IntegrationTest.java
+/home/awn/Documents/root/example-plans/src/test/java/com/example/plans/PlansApplicationTests.java
+/home/awn/Documents/root/example-plans/src/test/java/com/example/plans/domain/model/PlanModelTest.java
+/home/awn/Documents/root/example-plans/src/test/java/com/example/plans/persistence/PlanPersistenceTest.java
+/home/awn/Documents/root/example-plans/src/test/java/com/example/plans/persistence/adapter/PlanRepositoryAdapterTest.java

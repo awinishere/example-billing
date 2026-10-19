@@ -1,0 +1,4 @@
+# konfigurasi tambahan untuk example-plans
+plans:
+  name: default-plans
+  max-retries: 3

@@ -1,0 +1,5 @@
+com/example/plans/PlansApplicationTests.class
+com/example/plans/persistence/adapter/PlanRepositoryAdapterTest.class
+com/example/plans/domain/model/PlanModelTest.class
+com/example/plans/IntegrationTest.class
+com/example/plans/persistence/PlanPersistenceTest.class
