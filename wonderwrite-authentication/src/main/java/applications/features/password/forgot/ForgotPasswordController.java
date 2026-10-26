@@ -40,10 +40,14 @@ public class ForgotPasswordController {
                     schema = @Schema(implementation = ForgotPasswordRequest.class),
                     examples = {
                             @ExampleObject(name = "known-email", summary = "Address exists", value = """
-                                    {"email":"user@example.com"}
+                                    {
+                                        "email":"user@example.com"
+                                    }
                                     """),
                             @ExampleObject(name = "unknown-email", summary = "Address does not exist (still 200)", value = """
-                                    {"email":"ghost@nowhere.com"}
+                                    {
+                                        "email":"ghost@nowhere.com"
+                                    }
                                     """)
                     }))
     @ApiResponses({
@@ -53,7 +57,10 @@ public class ForgotPasswordController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"email: must be a well-formed email address"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"email: must be a well-formed email address"
+                                    }
                                     """)))
     })
     @PostMapping

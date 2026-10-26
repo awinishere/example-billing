@@ -38,20 +38,30 @@ public class AppleRegisterController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppleRegisterRequest.class),
                     examples = @ExampleObject(name = "valid", summary = "New Apple identity", value = """
-                            {"providerUserId":"001429.3a8b7c6d5e4f210a9b8c","email":"user@icloud.com"}
+                            {
+                                "providerUserId":"001429.3a8b7c6d5e4f210a9b8c",
+                                "email":"user@icloud.com"
+                            }
                             """)))
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Apple account provisioned or linked",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = AppleRegisterResponse.class),
                             examples = @ExampleObject(name = "created", value = """
-                                    {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7","email":"user@icloud.com","provisioned":true}
+                                    {
+                                        "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                        "email":"user@icloud.com",
+                                        "provisioned":true
+                                    }
                                     """))),
             @ApiResponse(responseCode = "400", description = "Validation failed (blank providerUserId, malformed email)",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"providerUserId: must not be blank"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"providerUserId: must not be blank"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "409", description = "Apple identity or email already registered; response body is empty",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))

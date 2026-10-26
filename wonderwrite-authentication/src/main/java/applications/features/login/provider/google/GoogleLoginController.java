@@ -44,7 +44,10 @@ public class GoogleLoginController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = GoogleLoginRequest.class),
                     examples = @ExampleObject(name = "valid", summary = "Google identity", value = """
-                            {"providerUserId":"110483738369414381905","email":"user@gmail.com"}
+                            {
+                                "providerUserId":"110483738369414381905",
+                                "email":"user@gmail.com"
+                            }
                             """)))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Authenticated: session cookies issued",
@@ -52,13 +55,19 @@ public class GoogleLoginController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = GoogleLoginResponse.class),
                             examples = @ExampleObject(name = "authenticated", value = """
-                                    {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7","provisioned":true}
+                                    {
+                                        "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                        "provisioned":true
+                                    }
                                     """))),
             @ApiResponse(responseCode = "400", description = "Validation failed (blank providerUserId, malformed email)",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"providerUserId: must not be blank"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"providerUserId: must not be blank"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "401", description = "Unknown Google identity; response body is empty",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))

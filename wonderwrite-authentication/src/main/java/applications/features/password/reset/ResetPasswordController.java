@@ -39,10 +39,18 @@ public class ResetPasswordController {
                     schema = @Schema(implementation = ResetPasswordRequest.class),
                     examples = {
                             @ExampleObject(name = "valid", summary = "Accepted code", value = """
-                                    {"email":"user@example.com","code":"482913","newPassword":"N3w!passphrase"}
+                                    {
+                                        "email":"user@example.com",
+                                        "code":"482913",
+                                        "newPassword":"N3w!passphrase"
+                                    }
                                     """),
                             @ExampleObject(name = "invalid-code", summary = "Rejected with 400", value = """
-                                    {"email":"user@example.com","code":"000000","newPassword":"N3w!passphrase"}
+                                    {
+                                        "email":"user@example.com",
+                                        "code":"000000",
+                                        "newPassword":"N3w!passphrase"
+                                    }
                                     """)
                     }))
     @ApiResponses({
@@ -50,13 +58,18 @@ public class ResetPasswordController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ResetPasswordResponse.class),
                             examples = @ExampleObject(name = "reset", value = """
-                                    {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+                                    {
+                                        "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "400", description = "Invalid/expired/consumed code (empty body) or request validation failure (ErrorResponse body)",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"newPassword: must not be blank"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"newPassword: must not be blank"
+                                    }
                                     """)))
     })
     @PostMapping

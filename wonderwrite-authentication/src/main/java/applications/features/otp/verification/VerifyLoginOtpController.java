@@ -45,10 +45,16 @@ public class VerifyLoginOtpController {
                     schema = @Schema(implementation = VerifyLoginOtpRequest.class),
                     examples = {
                             @ExampleObject(name = "valid", summary = "Correct code", value = """
-                                    {"userId":"7c9e6679-7425-40de-944b-e07fc1f90ae7","code":"482913"}
+                                    {
+                                        "userId":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                        "code":"482913"
+                                    }
                                     """),
                             @ExampleObject(name = "wrong-code", summary = "Rejected with 401", value = """
-                                    {"userId":"7c9e6679-7425-40de-944b-e07fc1f90ae7","code":"000000"}
+                                    {
+                                        "userId":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                        "code":"000000"
+                                    }
                                     """)
                     }))
     @ApiResponses({
@@ -57,13 +63,19 @@ public class VerifyLoginOtpController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = VerifyLoginOtpResponse.class),
                             examples = @ExampleObject(name = "verified", value = """
-                                    {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7","email":"newuser@example.com"}
+                                    {
+                                        "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                        "email":"newuser@example.com"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "400", description = "Validation failed (null userId, code outside 4-10 chars)",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"code: size must be between 4 and 10"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"code: size must be between 4 and 10"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "401", description = "Invalid, expired, or consumed code; response body is empty",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))

@@ -47,7 +47,10 @@ public class ManualLoginController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ManualLoginRequest.class),
                     examples = @ExampleObject(name = "valid", summary = "Email + password", value = """
-                            {"email":"newuser@example.com","password":"S3cret!passphrase"}
+                            {
+                                "email":"newuser@example.com",
+                                "password":"S3cret!passphrase"
+                            }
                             """)))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Password correct. Body carries otpRequired=true with a TTL when the email is still unverified (no cookies set, finish at /api/v1/login/verify-otp); otherwise cookies are issued and otpRequired=false",
@@ -56,10 +59,20 @@ public class ManualLoginController {
                             schema = @Schema(implementation = ManualLoginResponse.class),
                             examples = {
                                     @ExampleObject(name = "authenticated", summary = "verified email, cookies issued", value = """
-                                            {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7","email":"user@example.com","otpRequired":false,"otpTtlSeconds":null}
+                                            {
+                                                "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                                "email":"user@example.com",
+                                                "otpRequired":false,
+                                                "otpTtlSeconds":null
+                                            }
                                             """),
                                     @ExampleObject(name = "otp-challenge", summary = "unverified email, OTP emailed", value = """
-                                            {"id":"7c9e6679-7425-40de-944b-e07fc1f90ae7","email":"newuser@example.com","otpRequired":true,"otpTtlSeconds":300}
+                                            {
+                                                "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                                                "email":"newuser@example.com",
+                                                "otpRequired":true,
+                                                "otpTtlSeconds":300
+                                            }
                                             """)
                             })),
             @ApiResponse(responseCode = "400", description = "Validation failed (blank/malformed email or password)",
