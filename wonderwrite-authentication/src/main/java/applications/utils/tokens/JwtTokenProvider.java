@@ -8,16 +8,23 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,11 +39,13 @@ public class JwtTokenProvider {
 
     private final JwtProperties props;
 
-    private SecretKey signingKey;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
 
     @PostConstruct
-    void init() {
-        this.signingKey = Keys.hmacShaKeyFor(props.getSecret().getBytes(StandardCharsets.UTF_8));
+    void init() throws IOException, GeneralSecurityException {
+        this.privateKey = readPrivateKey(props.getPrivateKeyPath());
+        this.publicKey = readPublicKey(props.getPublicKeyPath());
         if (log.isDebugEnabled()) {
             log.debug("JwtTokenProvider ready issuer={} accessTtl={} refreshTtl={}",
                     props.getIssuer(),
@@ -75,7 +84,7 @@ public class JwtTokenProvider {
         Claims payload;
         try {
             payload = Jwts.parser()
-                    .verifyWith(signingKey)
+                    .verifyWith(publicKey)
                     .requireIssuer(props.getIssuer())
                     .build()
                     .parseSignedClaims(command.token())
@@ -116,7 +125,25 @@ public class JwtTokenProvider {
                 .claim(CLAIM_TYPE, command.type().name())
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(issuedAt.plus(ttl)))
-                .signWith(signingKey, Jwts.SIG.HS256)
+                .signWith(privateKey, Jwts.SIG.RS256)
                 .compact();
+    }
+
+    private PrivateKey readPrivateKey(Path path) throws IOException, GeneralSecurityException {
+        return KeyFactory.getInstance("RSA")
+                .generatePrivate(new PKCS8EncodedKeySpec(readDer(path, "PRIVATE KEY")));
+    }
+
+    private PublicKey readPublicKey(Path path) throws IOException, GeneralSecurityException {
+        return KeyFactory.getInstance("RSA")
+                .generatePublic(new X509EncodedKeySpec(readDer(path, "PUBLIC KEY")));
+    }
+
+    private byte[] readDer(Path path, String marker) throws IOException {
+        String pem = Files.readString(path)
+                .replace("-----BEGIN " + marker + "-----", "")
+                .replace("-----END " + marker + "-----", "")
+                .replaceAll("\\s", "");
+        return Base64.getDecoder().decode(pem);
     }
 }

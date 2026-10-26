@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 
 @Getter
@@ -13,22 +14,23 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "app.security.jwt")
 public class JwtProperties {
 
-    private String secret;
+    private Path privateKeyPath;
+    private Path publicKeyPath;
     private Duration accessTokenTtl = Duration.ofMinutes(15);
     private Duration refreshTokenTtl = Duration.ofDays(7);
     private String issuer = "wonderwrite";
 
     @PostConstruct
     void validate() {
-        if (secret == null || secret.isBlank()) {
+        if (privateKeyPath == null || !Files.isReadable(privateKeyPath)) {
             throw new IllegalStateException(
-                    "app.security.jwt.secret is required, set JWT_SECRET env var and never hard-code it"
+                    "app.security.jwt.private-key-path must point to a readable PKCS#8 .pem file, set JWT_PRIVATE_KEY_PATH env var and never hard-code it"
             );
         }
 
-        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+        if (publicKeyPath == null || !Files.isReadable(publicKeyPath)) {
             throw new IllegalStateException(
-                    "app.security.jwt.secret must be at least 32 bytes for HS256"
+                    "app.security.jwt.public-key-path must point to a readable X.509 .pem file, set JWT_PUBLIC_KEY_PATH env var and never hard-code it"
             );
         }
 

@@ -34,7 +34,8 @@ app:
 
   security:
     jwt:
-      secret: ${JWT_SECRET}
+      private-key-path: ${JWT_PRIVATE_KEY_PATH}
+      public-key-path: ${JWT_PUBLIC_KEY_PATH}
       access-token-ttl: ${JWT_ACCESS_TTL:PT15M}
       refresh-token-ttl: ${JWT_REFRESH_TTL:P7D}
       issuer: ${JWT_ISSUER:wonderwrite}
