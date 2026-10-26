@@ -4,10 +4,16 @@ import applications.extensions.types.RoleAccount;
 
 import java.util.UUID;
 
-public record AppleRegisterResult(
-        UUID userId,
-        String email,
-        RoleAccount role,
-        boolean provisioned
-) {
+public sealed interface AppleRegisterResult {
+
+    record Success(
+            UUID id,
+            String email,
+            RoleAccount role,
+            boolean provisioned
+    ) implements AppleRegisterResult {}
+
+    record Failed(
+            String reason
+    ) implements AppleRegisterResult {}
 }

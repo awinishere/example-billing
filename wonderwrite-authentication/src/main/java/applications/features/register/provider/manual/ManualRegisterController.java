@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ManualRegisterController.REGISTER_PATH)
+@RequestMapping("/api/v1/register")
 @AllArgsConstructor
 public class ManualRegisterController {
-
-    public static final String REGISTER_PATH = "/api/v1/register";
 
     private final ManualRegisterService manualRegisterService;
 

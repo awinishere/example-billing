@@ -7,9 +7,6 @@ public final class ClientInfo {
 
     private static final String XFF_HEADER = "X-Forwarded-For";
 
-    private ClientInfo() {
-    }
-
     public static ClientFingerprint fingerprint(HttpServletRequest request) {
         return new ClientFingerprint(request.getHeader("User-Agent"), resolveIp(request));
     }

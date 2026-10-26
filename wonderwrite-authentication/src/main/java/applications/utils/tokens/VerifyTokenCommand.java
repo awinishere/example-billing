@@ -1,4 +1,4 @@
-package applications.tokens.command;
+package applications.utils.tokens;
 
 import applications.extensions.types.TokenType;
 

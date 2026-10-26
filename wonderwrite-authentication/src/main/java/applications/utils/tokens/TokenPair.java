@@ -1,4 +1,4 @@
-package applications.tokens;
+package applications.utils.tokens;
 
 public record TokenPair(
         String accessToken,

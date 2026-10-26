@@ -1,6 +1,6 @@
 package applications.configurations;
 
-import applications.features.register.provider.manual.ManualRegisterController;
+import applications.properties.OAuthProperties;
 import applications.security.OAuthLoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,7 +24,11 @@ import java.nio.charset.StandardCharsets;
 public class NetworkConfiguration {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            ManualRegisterController.REGISTER_PATH,
+            "/api/v1/register",
+            "/api/v1/register/google",
+            "/api/v1/register/apple",
+            "/api/v1/login/google",
+            "/api/v1/login/apple",
             "/v3/api-docs/**",
             "/docs",
             "/docs/**",
@@ -114,7 +118,11 @@ public class NetworkConfiguration {
         if (clientRegistrationRepository != null) {
             http.oauth2Login(oauth -> oauth
                     .successHandler(oauthSuccessHandler)
-                    .failureHandler((req, res, e) -> res.sendRedirect(oauthProperties.getFailureUrl()))
+                    .failureHandler((
+                            req,
+                            res,
+                            e
+                    ) -> res.sendRedirect(oauthProperties.getFailureUrl()))
             );
         }
 

@@ -1,12 +1,18 @@
 package applications.features.login.provider.apple;
 
-import applications.tokens.TokenPair;
+import applications.utils.tokens.TokenPair;
 
 import java.util.UUID;
 
-public record AppleLoginResult(
-        UUID userId,
-        TokenPair tokens,
-        boolean provisioned
-) {
+public sealed interface AppleLoginResult {
+
+    record Success(
+            UUID id,
+            TokenPair tokens,
+            boolean provisioned
+    ) implements AppleLoginResult {}
+
+    record Failed(
+            String reason
+    ) implements AppleLoginResult {}
 }

@@ -1,4 +1,4 @@
-package applications.configurations;
+package applications.properties;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,9 +3,9 @@ package applications.features.login.provider.google;
 import applications.features.register.provider.google.GoogleRegisterCommand;
 import applications.features.register.provider.google.GoogleRegisterResult;
 import applications.features.register.provider.google.GoogleRegisterService;
-import applications.tokens.RefreshTokenIssuer;
-import applications.tokens.command.StartTokenFamilyCommand;
-import applications.tokens.result.StartTokenFamilyResult;
+import applications.utils.tokens.RefreshTokenIssuer;
+import applications.utils.tokens.StartTokenFamilyCommand;
+import applications.utils.tokens.TokenPair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +17,23 @@ public class GoogleLoginService {
     private final RefreshTokenIssuer refreshTokenIssuer;
 
     public GoogleLoginResult login(GoogleLoginCommand command) {
-        GoogleRegisterResult registered = registerService.register(
-                new GoogleRegisterCommand(command.providerUserId(), command.email())
-        );
+        return switch (registerService.register(
+                new GoogleRegisterCommand(command.providerUserId(), command.email()))) {
 
-        StartTokenFamilyResult family = refreshTokenIssuer.startFamily(
-                new StartTokenFamilyCommand(
-                        registered.userId(),
-                        registered.email(),
-                        registered.role(),
-                        command.fingerprint()
-                )
-        );
+            case GoogleRegisterResult.Failed failed ->
+                    new GoogleLoginResult.Failed(failed.reason());
 
-        return new GoogleLoginResult(
-                registered.userId(),
-                family.tokens(),
-                registered.provisioned()
-        );
+            case GoogleRegisterResult.Success success -> {
+                TokenPair tokens = refreshTokenIssuer.startFamily(
+                        new StartTokenFamilyCommand(
+                                success.id(),
+                                success.email(),
+                                success.role(),
+                                command.fingerprint()
+                        )
+                ).tokens();
+                yield new GoogleLoginResult.Success(success.id(), tokens, success.provisioned());
+            }
+        };
     }
 }

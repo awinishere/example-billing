@@ -1,6 +1,6 @@
 package applications.security;
 
-import applications.tokens.TokenPair;
+import applications.utils.tokens.TokenPair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -15,12 +15,23 @@ public class AuthCookieWriter {
     public static final String REFRESH_PATH = "/api/v1/refresh";
 
     public void apply(HttpHeaders headers, TokenPair pair) {
-        headers.add(HttpHeaders.SET_COOKIE, cookie(ACCESS_COOKIE, pair.accessToken(), "/", pair.accessTtlSeconds()).toString());
-        headers.add(HttpHeaders.SET_COOKIE, cookie(REFRESH_COOKIE, pair.refreshToken(), REFRESH_PATH, pair.refreshTtlSeconds()).toString());
+        headers.add(HttpHeaders.SET_COOKIE, cookie(
+                ACCESS_COOKIE,
+                pair.accessToken(),
+                "/",
+                pair.accessTtlSeconds()).toString()
+        );
+        headers.add(HttpHeaders.SET_COOKIE, cookie(
+                REFRESH_COOKIE,
+                pair.refreshToken(),
+                REFRESH_PATH,
+                pair.refreshTtlSeconds()).toString()
+        );
     }
 
     private ResponseCookie cookie(String name, String value, String path, long maxAgeSeconds) {
-        return ResponseCookie.from(name, value)
+        return ResponseCookie
+                .from(name, value)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")

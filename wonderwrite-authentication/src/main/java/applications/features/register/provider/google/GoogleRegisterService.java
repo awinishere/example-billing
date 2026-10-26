@@ -36,12 +36,10 @@ public class GoogleRegisterService {
                 .findByProviderAndProviderUserId(PROVIDER, command.providerUserId());
 
         if (existing.isPresent()) {
-            Credentials linked = credentialsRepositories
-                    .findById(existing.get().getUserId())
-                    .orElseThrow(() -> new IllegalStateException(
-                            "OAuth link points at missing account " + existing.get().getUserId()
-                    ));
-            return toResult(linked, false);
+            return credentialsRepositories.findById(existing.get().getUserId())
+                    .map(account -> success(account, false))
+                    .orElseGet(() -> new GoogleRegisterResult.Failed(
+                            "OAuth link points at missing account " + existing.get().getUserId()));
         }
 
         return provision(command.providerUserId(), command.email());
@@ -49,10 +47,15 @@ public class GoogleRegisterService {
 
     private GoogleRegisterResult provision(String providerUserId, String email) {
         String resolvedEmail = resolveEmail(email, providerUserId);
-        Credentials account = createAccount(resolvedEmail);
+        Optional<Credentials> account = createAccount(resolvedEmail);
 
+        if (account.isEmpty()) {
+            return new GoogleRegisterResult.Failed("Unable to resolve account for the provided email");
+        }
+
+        Credentials created = account.get();
         OAuthCredentials link = OAuthCredentials.newLink(
-                account.getId(),
+                created.getId(),
                 PROVIDER,
                 providerUserId,
                 resolvedEmail
@@ -61,26 +64,20 @@ public class GoogleRegisterService {
         try {
             oauthRepositories.save(link);
         } catch (DataIntegrityViolationException raced) {
-            OAuthCredentials winner = oauthRepositories
-                    .findByProviderAndProviderUserId(PROVIDER, providerUserId)
-                    .orElseThrow(() -> raced);
-
-            Credentials racedAccount = credentialsRepositories
-                    .findById(winner.getUserId())
-                    .orElseThrow(() -> new IllegalStateException(
-                            "Race resolved but account is missing " + winner.getUserId()
-                    ));
-
-            return toResult(racedAccount, false);
+            return oauthRepositories.findByProviderAndProviderUserId(PROVIDER, providerUserId)
+                    .flatMap(winner -> credentialsRepositories.findById(winner.getUserId()))
+                    .map(racedAccount -> success(racedAccount, false))
+                    .orElseGet(() -> new GoogleRegisterResult.Failed(
+                            "Race resolved but account is missing for subject " + providerUserId));
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Google account provisioned userId={}", account.getId());
+            log.debug("Google account provisioned userId={}", created.getId());
         }
-        return toResult(account, true);
+        return success(created, true);
     }
 
-    private Credentials createAccount(String email) {
+    private Optional<Credentials> createAccount(String email) {
         Credentials account = Credentials.newOAuthAccount(
                 email,
                 hash(generatePassword()),
@@ -88,14 +85,12 @@ public class GoogleRegisterService {
         );
 
         try {
-            return credentialsRepositories.save(account);
+            return Optional.of(credentialsRepositories.save(account));
         } catch (DataIntegrityViolationException dupEmail) {
             if (log.isDebugEnabled()) {
                 log.debug("Google first-login matched existing email");
             }
-            return credentialsRepositories
-                    .findByEmail(email)
-                    .orElseThrow(() -> dupEmail);
+            return credentialsRepositories.findByEmail(email);
         }
     }
 
@@ -117,8 +112,8 @@ public class GoogleRegisterService {
         return PROVIDER + "." + providerUserId + "@oauth.invalid";
     }
 
-    private GoogleRegisterResult toResult(Credentials account, boolean provisioned) {
-        return new GoogleRegisterResult(
+    private GoogleRegisterResult success(Credentials account, boolean provisioned) {
+        return new GoogleRegisterResult.Success(
                 account.getId(),
                 account.getEmail(),
                 account.getRole(),

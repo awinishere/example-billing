@@ -1,17 +1,15 @@
-package applications.tokens.command;
+package applications.utils.tokens;
 
-import applications.domain.model.ClientFingerprint;
 import applications.extensions.types.RoleAccount;
 
 import java.util.UUID;
 
-public record StartTokenFamilyCommand(
+public record IssueTokenCommand(
         UUID userId,
         String email,
-        RoleAccount role,
-        ClientFingerprint fingerprint
+        RoleAccount role
 ) {
-    public StartTokenFamilyCommand {
+    public IssueTokenCommand {
         if (userId == null) {
             throw new IllegalArgumentException("User id must not be null");
         }

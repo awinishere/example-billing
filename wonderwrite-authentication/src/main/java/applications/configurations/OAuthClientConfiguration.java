@@ -1,7 +1,9 @@
 package applications.configurations;
 
-import applications.configurations.OAuthProperties.Apple;
-import applications.configurations.OAuthProperties.Google;
+import applications.properties.OAuthProperties;
+import applications.properties.OAuthProperties.Apple;
+import applications.properties.OAuthProperties.Google;
+import applications.utils.tokens.AppleClientSecretGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;

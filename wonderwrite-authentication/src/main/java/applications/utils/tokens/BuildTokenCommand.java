@@ -1,16 +1,18 @@
-package applications.tokens;
+package applications.utils.tokens;
 
 import applications.extensions.types.RoleAccount;
 import applications.extensions.types.TokenType;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
-public record TokenClaims(
+public record BuildTokenCommand(
         UUID userId,
         String email,
         RoleAccount role,
         TokenType type,
-        long issuedAtEpochSeconds,
-        long expiresAtEpochSeconds
+        Instant issuedAt,
+        Duration ttl
 ) {
 }

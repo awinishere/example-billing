@@ -1,11 +1,7 @@
-package applications.tokens;
+package applications.utils.tokens;
 
 import applications.domain.entities.RefreshSecret;
 import applications.domain.repositories.RefreshSecretRepositories;
-import applications.tokens.command.IssueTokenCommand;
-import applications.tokens.command.StartTokenFamilyCommand;
-import applications.tokens.result.IssueTokenResult;
-import applications.tokens.result.StartTokenFamilyResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,8 +25,11 @@ public class RefreshTokenIssuer {
     @Transactional
     public StartTokenFamilyResult startFamily(StartTokenFamilyCommand command) {
         UUID familyId = UUID.randomUUID();
-        IssueTokenResult issued = jwtTokenProvider.issue(
-                new IssueTokenCommand(command.userId(), command.email(), command.role())
+        IssueTokenResult issued = jwtTokenProvider.issue(new IssueTokenCommand(
+                command.userId(),
+                command.email(),
+                command.role()
+                )
         );
         TokenPair pair = issued.tokens();
 

@@ -1,14 +1,9 @@
-package applications.tokens;
+package applications.utils.tokens;
 
-import applications.configurations.JwtProperties;
+import applications.properties.JwtProperties;
 import applications.extensions.exception.TokenException;
 import applications.extensions.types.RoleAccount;
 import applications.extensions.types.TokenType;
-import applications.tokens.command.BuildTokenCommand;
-import applications.tokens.command.IssueTokenCommand;
-import applications.tokens.command.VerifyTokenCommand;
-import applications.tokens.result.IssueTokenResult;
-import applications.tokens.result.VerifyTokenResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -44,15 +39,32 @@ public class JwtTokenProvider {
         this.signingKey = Keys.hmacShaKeyFor(props.getSecret().getBytes(StandardCharsets.UTF_8));
         if (log.isDebugEnabled()) {
             log.debug("JwtTokenProvider ready issuer={} accessTtl={} refreshTtl={}",
-                    props.getIssuer(), props.getAccessTokenTtl(), props.getRefreshTokenTtl());
+                    props.getIssuer(),
+                    props.getAccessTokenTtl(),
+                    props.getRefreshTokenTtl()
+            );
         }
     }
 
     public IssueTokenResult issue(IssueTokenCommand command) {
         Instant now = Instant.now();
         TokenPair pair = new TokenPair(
-                build(new BuildTokenCommand(command.userId(), command.email(), command.role(), TokenType.ACCESS, now, props.getAccessTokenTtl())),
-                build(new BuildTokenCommand(command.userId(), command.email(), command.role(), TokenType.REFRESH, now, props.getRefreshTokenTtl())),
+                build(new BuildTokenCommand(
+                        command.userId(),
+                        command.email(),
+                        command.role(),
+                        TokenType.ACCESS,
+                        now,
+                        props.getAccessTokenTtl()
+                )),
+                build(new BuildTokenCommand(
+                        command.userId(),
+                        command.email(),
+                        command.role(),
+                        TokenType.REFRESH,
+                        now,
+                        props.getRefreshTokenTtl()
+                )),
                 props.getAccessTokenTtl().toSeconds(),
                 props.getRefreshTokenTtl().toSeconds()
         );

@@ -1,6 +1,6 @@
-package applications.configurations;
+package applications.utils.tokens;
 
-import applications.configurations.OAuthProperties.Apple;
+import applications.properties.OAuthProperties.Apple;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,9 @@ public class AppleClientSecretGenerator {
         }
         byte[] der = extractDer(pem.replace("\\n", "\n"));
         try {
-            return KeyFactory.getInstance("EC").generatePrivate(new PKCS8EncodedKeySpec(der));
+            return KeyFactory
+                    .getInstance("EC")
+                    .generatePrivate(new PKCS8EncodedKeySpec(der));
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to load Apple EC private key", ex);
         }

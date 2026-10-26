@@ -1,4 +1,4 @@
-package applications.configurations;
+package applications.properties;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
