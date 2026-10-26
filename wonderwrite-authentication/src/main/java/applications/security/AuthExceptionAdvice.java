@@ -52,4 +52,12 @@ public class AuthExceptionAdvice {
                 .badRequest()
                 .body(new ErrorResponse("VALIDATION_FAILED", detail.isBlank() ? "Invalid input" : detail));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> onIllegalArgument(IllegalArgumentException ex) {
+        log.debug("Command contract violated: {}", ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("VALIDATION_FAILED", ex.getMessage()));
+    }
 }
