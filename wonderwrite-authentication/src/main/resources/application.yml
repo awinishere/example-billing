@@ -46,6 +46,12 @@ app:
       max-attempts: ${OTP_MAX_ATTEMPTS:3}
       code-length: ${OTP_CODE_LENGTH:6}
 
+    login:
+      max-failed-per-email: ${LOGIN_MAX_FAILED_PER_EMAIL:5}
+      email-lockout: ${LOGIN_EMAIL_LOCKOUT:PT15M}
+      max-attempts-per-ip: ${LOGIN_MAX_ATTEMPTS_PER_IP:20}
+      ip-rate-window: ${LOGIN_IP_RATE_WINDOW:PT1M}
+
     oauth:
       success-url: ${OAUTH_SUCCESS_URL:/}
       failure-url: ${OAUTH_FAILURE_URL:/login?error=oauth}

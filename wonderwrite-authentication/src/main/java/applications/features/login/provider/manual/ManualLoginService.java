@@ -5,6 +5,9 @@ import applications.crypto.features.matching.MatchingCommand;
 import applications.domain.entities.Credentials;
 import applications.domain.repositories.CredentialsRepositories;
 import applications.extensions.types.OneTimePassPurpose;
+import applications.features.login.guard.AssertLoginAllowedCommand;
+import applications.features.login.guard.LoginAttemptTracker;
+import applications.features.login.guard.RecordLoginAttemptCommand;
 import applications.features.otp.send.SendOtpCommand;
 import applications.features.otp.send.SendOtpResult;
 import applications.features.otp.send.SendOtpService;
@@ -27,16 +30,22 @@ public class ManualLoginService {
     private final MatchingContract matchingContract;
     private final SendOtpService sendOtpService;
     private final RefreshTokenIssuer refreshTokenIssuer;
+    private final LoginAttemptTracker attemptTracker;
 
     @Transactional
     public ManualLoginResult execute(ManualLoginCommand command) {
         String email = normalize(command.email());
+        String ip = command.fingerprint() == null ? null : command.fingerprint().ipAddress();
+
+        attemptTracker.assertAllowed(new AssertLoginAllowedCommand(email, ip));
+
         Optional<Credentials> maybeUser = credentialsRepositories.findByEmail(email);
 
         if (maybeUser.isEmpty() || !matchingContract.matches(new MatchingCommand(
                 command.password(),
                 maybeUser.get().getPassword())
         ).matched()) {
+            attemptTracker.record(new RecordLoginAttemptCommand(email, ip, false));
             log.debug("Login rejected email={} reason=invalid_credentials", maskEmail(email));
             return new ManualLoginResult.Failed("Invalid email or password");
         }
@@ -44,6 +53,7 @@ public class ManualLoginService {
         Credentials user = maybeUser.get();
 
         if (!user.isEmailVerification()) {
+            attemptTracker.record(new RecordLoginAttemptCommand(email, ip, true));
             return switch (sendOtpService.execute(new SendOtpCommand(user, OneTimePassPurpose.LOGIN_VERIFICATION))) {
                 case SendOtpResult.Failed failed -> new ManualLoginResult.Failed(failed.reason());
                 case SendOtpResult.Success success -> new ManualLoginResult.OtpChallenge(
@@ -61,6 +71,7 @@ public class ManualLoginService {
                 command.fingerprint()
         )).tokens();
 
+        attemptTracker.record(new RecordLoginAttemptCommand(email, ip, true));
         log.debug("Login success email={}", maskEmail(user.getEmail()));
 
         return new ManualLoginResult.Success(user.getId(), user.getEmail(), tokens);

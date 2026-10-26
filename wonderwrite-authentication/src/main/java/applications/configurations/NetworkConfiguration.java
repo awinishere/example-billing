@@ -1,6 +1,7 @@
 package applications.configurations;
 
 import applications.properties.OAuthProperties;
+import applications.security.ErrorResponse;
 import applications.security.OAuthLoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectProvider;
@@ -143,11 +144,5 @@ public class NetworkConfiguration {
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setCharacterEncoding(StandardCharsets.UTF_8.name());
         objectMapper.writeValue(res.getWriter(), new ErrorResponse(reason, message));
-    }
-
-    private record ErrorResponse(
-            String reason,
-            String message
-    ) {
     }
 }
