@@ -94,16 +94,22 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private String extractEmail(OAuth2User principal) {
+        // Preferred path: Google exposes the address as a top-level "email" attribute.
         Object value = principal.getAttributes().get("email");
         if (value instanceof String email && !email.isBlank()) {
             return email;
         }
+        // Fallback for OIDC principals where the verified address lives on the token claims.
         if (principal instanceof OidcUser oidc) {
             String email = oidc.getEmail();
             if (email != null && !email.isBlank()) {
                 return email;
             }
         }
+        // Last resort for Apple: Apple only releases the email on the very first consent,
+        // nested inside the "user" contact object instead of the top-level attributes.
+        // On later logins this resolves to null, which is acceptable because the account
+        // is already linked through providerUserId and the stored email is reused.
         Map<String, Object> contact = asMap(principal.getAttributes().get("user"));
         if (contact != null && contact.get("email") instanceof String email && !email.isBlank()) {
             return email;
@@ -111,6 +117,9 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         return null;
     }
 
+    // Casts a nested OAuth2 attribute to a map when the provider sends structured data.
+    // The cast is unchecked because the runtime type comes from the provider response;
+    // non-map values yield null so callers must null-check the result.
     @SuppressWarnings("unchecked")
     private Map<String, Object> asMap(Object value) {
         return value instanceof Map<?, ?> map ? (Map<String, Object>) map : null;
