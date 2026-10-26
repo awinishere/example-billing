@@ -1,4 +1,4 @@
-package applications.features.reset.password;
+package applications.features.password.forgot;
 
 import applications.domain.entities.Credentials;
 import applications.domain.repositories.CredentialsRepositories;

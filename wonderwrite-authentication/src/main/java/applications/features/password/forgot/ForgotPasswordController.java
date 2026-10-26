@@ -1,4 +1,4 @@
-package applications.features.reset.password;
+package applications.features.password.forgot;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

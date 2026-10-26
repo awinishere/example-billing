@@ -1,4 +1,4 @@
-package applications.features.reset.password;
+package applications.features.password.reset;
 
 public record ResetPasswordCommand(
         String email,

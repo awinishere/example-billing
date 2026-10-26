@@ -1,4 +1,4 @@
-package applications.features.reset.password;
+package applications.features.password.reset;
 
 import applications.crypto.api.HashingContract;
 import applications.crypto.features.hashing.HashingCommand;
