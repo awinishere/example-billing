@@ -24,13 +24,15 @@ public class JwtProperties {
     void validate() {
         if (privateKeyPath == null || !Files.isReadable(privateKeyPath)) {
             throw new IllegalStateException(
-                    "app.security.jwt.private-key-path must point to a readable PKCS#8 .pem file, set JWT_PRIVATE_KEY_PATH env var and never hard-code it"
+                    "app.security.jwt.private-key-path must point to a readable PKCS#8 .pem file," +
+                            "set JWT_PRIVATE_KEY_PATH env var and never hard-code it"
             );
         }
 
         if (publicKeyPath == null || !Files.isReadable(publicKeyPath)) {
             throw new IllegalStateException(
-                    "app.security.jwt.public-key-path must point to a readable X.509 .pem file, set JWT_PUBLIC_KEY_PATH env var and never hard-code it"
+                    "app.security.jwt.public-key-path must point to a readable X.509 .pem file," +
+                            "set JWT_PUBLIC_KEY_PATH env var and never hard-code it"
             );
         }
 
