@@ -39,4 +39,9 @@ public class AuthCookieWriter {
                 .maxAge(Duration.ofSeconds(maxAgeSeconds))
                 .build();
     }
+
+    public void clear(HttpHeaders headers) {
+        headers.add(HttpHeaders.SET_COOKIE, cookie(ACCESS_COOKIE, "", "/", 0).toString());
+        headers.add(HttpHeaders.SET_COOKIE, cookie(REFRESH_COOKIE, "", REFRESH_PATH, 0).toString());
+    }
 }

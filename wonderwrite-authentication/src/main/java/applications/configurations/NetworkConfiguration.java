@@ -2,6 +2,7 @@ package applications.configurations;
 
 import applications.properties.OAuthProperties;
 import applications.security.ErrorResponse;
+import applications.security.JwtAuthenticationFilter;
 import applications.security.OAuthLoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectProvider;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -51,17 +53,20 @@ public class NetworkConfiguration {
     private final OAuthProperties oauthProperties;
     private final OAuthLoginSuccessHandler oauthSuccessHandler;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public NetworkConfiguration(
             ObjectMapper objectMapper,
             OAuthProperties oauthProperties,
             OAuthLoginSuccessHandler oauthSuccessHandler,
-            ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider
+            ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider,
+            JwtAuthenticationFilter jwtAuthenticationFilter
     ) {
         this.objectMapper = objectMapper;
         this.oauthProperties = oauthProperties;
         this.oauthSuccessHandler = oauthSuccessHandler;
         this.clientRegistrationRepository = clientRegistrationRepositoryProvider.getIfAvailable();
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -118,7 +123,8 @@ public class NetworkConfiguration {
                                 "ACCESS_DENIED",
                                 "Insufficient privileges"
                         ))
-                );
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         if (clientRegistrationRepository != null) {
             http.oauth2Login(oauth -> oauth
