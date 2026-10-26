@@ -40,6 +40,12 @@ app:
       refresh-token-ttl: ${JWT_REFRESH_TTL:P7D}
       issuer: ${JWT_ISSUER:wonderwrite}
 
+    otp:
+      ttl: ${OTP_TTL:PT5M}
+      resend-gap: ${OTP_RESEND_GAP:PT1M}
+      max-attempts: ${OTP_MAX_ATTEMPTS:3}
+      code-length: ${OTP_CODE_LENGTH:6}
+
     oauth:
       success-url: ${OAUTH_SUCCESS_URL:/}
       failure-url: ${OAUTH_FAILURE_URL:/login?error=oauth}
