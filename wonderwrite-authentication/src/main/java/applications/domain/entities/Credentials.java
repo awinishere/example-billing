@@ -46,6 +46,9 @@ public class Credentials {
     @Column(name = "account_status", nullable = false, length = 16)
     private StatusAccount accountStatus = StatusAccount.PENDING;
 
+    @Column(name = "auth_provider", updatable = false, length = 32)
+    private String authProvider;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -60,6 +63,16 @@ public class Credentials {
         credentials.password = passwordHash;
         credentials.emailVerification = false;
         credentials.accountStatus = StatusAccount.ACTIVE;
+        return credentials;
+    }
+
+    public static Credentials newOAuthAccount(String email, String passwordHash, String provider) {
+        Credentials credentials = new Credentials();
+        credentials.email = email;
+        credentials.password = passwordHash;
+        credentials.emailVerification = true;
+        credentials.accountStatus = StatusAccount.ACTIVE;
+        credentials.authProvider = provider;
         return credentials;
     }
 
