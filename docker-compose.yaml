@@ -1,10 +1,10 @@
 services:
   database:
-    image: postgres:16-latest
+    image: postgres:16-alpine
     container_name: dev-postgres
     environment:
       POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5432:5432"
