@@ -79,7 +79,10 @@ public class ManualLoginController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "validation", value = """
-                                    {"reason":"VALIDATION_FAILED","message":"email: must be a well-formed email address"}
+                                    {
+                                        "reason":"VALIDATION_FAILED",
+                                        "message":"email: must be a well-formed email address"
+                                    }
                                     """))),
             @ApiResponse(responseCode = "401", description = "Invalid email or password; response body is empty",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -88,7 +91,10 @@ public class ManualLoginController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = applications.security.ErrorResponse.class),
                             examples = @ExampleObject(name = "rate-limited", value = """
-                                    {"reason":"RATE_LIMITED","message":"Too many failed login attempts"}
+                                    {
+                                        "reason":"RATE_LIMITED",
+                                        "message":"Too many failed login attempts"
+                                    }
                                     """)))
     })
     @PostMapping
