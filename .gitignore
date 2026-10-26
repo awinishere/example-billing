@@ -22,3 +22,5 @@ replay_pid*
 .env
 !.env.example
 !*/.env.example
+/wonderwrite-authentication/src/main/resources/migrations/
+/wonderwrite-authentication/keys/
