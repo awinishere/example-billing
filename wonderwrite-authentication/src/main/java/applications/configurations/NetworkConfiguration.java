@@ -1,7 +1,9 @@
 package applications.configurations;
 
 import applications.features.register.provider.manual.ManualRegisterController;
+import applications.security.OAuthLoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import tools.jackson.databind.ObjectMapper;
 
@@ -30,10 +33,26 @@ public class NetworkConfiguration {
             "/error"
     };
 
-    private final ObjectMapper objectMapper;
+    private static final String[] OAUTH_ENDPOINTS = {
+            "/oauth2/authorization/**",
+            "/login/oauth2/code/**"
+    };
 
-    public NetworkConfiguration(ObjectMapper objectMapper) {
+    private final ObjectMapper objectMapper;
+    private final OAuthProperties oauthProperties;
+    private final OAuthLoginSuccessHandler oauthSuccessHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
+    public NetworkConfiguration(
+            ObjectMapper objectMapper,
+            OAuthProperties oauthProperties,
+            OAuthLoginSuccessHandler oauthSuccessHandler,
+            ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider
+    ) {
         this.objectMapper = objectMapper;
+        this.oauthProperties = oauthProperties;
+        this.oauthSuccessHandler = oauthSuccessHandler;
+        this.clientRegistrationRepository = clientRegistrationRepositoryProvider.getIfAvailable();
     }
 
     @Bean
@@ -62,10 +81,13 @@ public class NetworkConfiguration {
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
+                    if (clientRegistrationRepository != null) {
+                        auth.requestMatchers(OAUTH_ENDPOINTS).permitAll();
+                    }
+                    auth.anyRequest().authenticated();
+                })
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((
                                 req,
@@ -88,6 +110,13 @@ public class NetworkConfiguration {
                                 "Insufficient privileges"
                         ))
                 );
+
+        if (clientRegistrationRepository != null) {
+            http.oauth2Login(oauth -> oauth
+                    .successHandler(oauthSuccessHandler)
+                    .failureHandler((req, res, e) -> res.sendRedirect(oauthProperties.getFailureUrl()))
+            );
+        }
 
         return http.build();
     }
