@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: wonderwrite-profile
+  jpa:
+    open-in-view: false
+
+server:
+  port: ${SERVER_PORT:8080}
