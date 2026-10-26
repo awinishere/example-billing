@@ -2,7 +2,7 @@ MVN ?= ./mvnw
 NAME ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help module build test run tree clean
+.PHONY: help module build test run tree clean db-up db-down
 
 help:
 	@echo "make module NAME=<module-name>    generate a Spring Boot + JPA + Lombok module"
@@ -10,6 +10,8 @@ help:
 	@echo "make test                         ./mvnw test (all modules)"
 	@echo "make run NAME=<module-name>       ./mvnw -pl <module> -am spring-boot:run"
 	@echo "make tree NAME=<module-name>      dependency:tree of a single module"
+	@echo "make db-up                        start docker compose dev services"
+	@echo "make db-down                      stop docker compose dev services"
 	@echo "make clean                        ./mvnw clean"
 
 module:
@@ -32,3 +34,9 @@ tree:
 
 clean:
 	@$(MVN) clean
+
+db-up:
+	@docker compose --env-file wonderwrite-authentication/.env up -d
+
+db-down:
+	@docker compose --env-file wonderwrite-authentication/.env down
