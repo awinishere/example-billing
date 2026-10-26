@@ -11,6 +11,7 @@ import applications.extensions.types.OneTimePassPurpose;
 import applications.properties.OtpProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,9 @@ public class SendOtpService {
     private final SendEmailContract sendEmailContract;
     private final OtpProperties props;
     private final SecureRandom secureRandom = new SecureRandom();
+
+    @Value("${app.mail.product-name}")
+    private String productName;
 
     @Transactional
     public SendOtpResult execute(SendOtpCommand command) {
@@ -59,9 +63,10 @@ public class SendOtpService {
                 null,
                 user.getEmail(),
                 null,
-                "Your Wonderwrite verification code",
+                "Your %s verification code".formatted(productName),
                 "otp-code",
                 Map.of(
+                        "productName", productName,
                         "recipientName", localPart(user.getEmail()),
                         "code", code,
                         "ttlMinutes", props.getTtl().toMinutes()

@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${productName}">Product</title>
 </head>
 <body>
+
+<p>Welcome <span th:text="${recipientName}">there</span>,</p>
+
+<p>
+    Your <span th:text="${productName}">Product</span> account is ready.
+    You can now sign in and start using
+    <span th:text="${productName}">Product</span>.
+</p>
+
+<p>
+    If you didn't create this account, please contact
+    <span th:text="${supportEmail}">support</span>.
+</p>
+
+<p>
+    Thanks,<br>
+    The <span th:text="${productName}">Product</span> Team
+</p>
 
 </body>
 </html>

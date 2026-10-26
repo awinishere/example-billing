@@ -2,173 +2,27 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify your identity</title>
+    <title th:text="${productName}">Product</title>
 </head>
-<body style="
-    margin: 0;
-    padding: 0;
-    background-color: #ffffff;
-    color: #24292f;
-    font-family: Arial, Helvetica, sans-serif;
-">
+<body>
 
-<table role="presentation"
-       width="100%"
-       cellpadding="0"
-       cellspacing="0"
-       border="0"
-       style="background-color: #ffffff;">
-    <tr>
-        <td align="center" style="padding: 16px 20px 0;">
+<p>Hello <span th:text="${recipientName}">there</span>,</p>
 
-            <table role="presentation"
-                   cellpadding="0"
-                   cellspacing="0"
-                   border="0">
-                <tr>
-                    <td align="center"
-                        style="padding-bottom: 14px;">
-                        <img
-                                src="cid:company-logo"
-                                width="30"
-                                height="30"
-                                alt="Company"
-                                style="
-                                display: block;
-                                width: 30px;
-                                height: 30px;
-                                border: 0;
-                            "
-                        />
-                    </td>
-                </tr>
-            </table>
+<p>Your <span th:text="${productName}">Product</span> verification code is:</p>
 
-            <h1 style="
-                margin: 0 0 16px;
-                font-size: 24px;
-                line-height: 1.35;
-                font-weight: 400;
-                text-align: center;
-                color: #24292f;
-            ">
-                Please verify your identity,
-                <strong
-                        th:text="${recipientName}"
-                        style="font-weight: 600;">
-                    recipient
-                </strong>
-            </h1>
+<p th:text="${code}">000000</p>
 
-            <table role="presentation"
-                   width="100%"
-                   cellpadding="0"
-                   cellspacing="0"
-                   border="0"
-                   style="
-                       max-width: 512px;
-                       border: 1px solid #d8dee4;
-                       border-radius: 6px;
-                       border-collapse: separate;
-                       background-color: #ffffff;
-                   ">
-                <tr>
-                    <td style="padding: 18px 17px 26px;">
+<p>
+    This code expires in <span th:text="${ttlMinutes}">5</span> minutes
+    and can be used only once.
+</p>
 
-                        <p style="
-                            margin: 0 0 12px;
-                            font-size: 14px;
-                            line-height: 1.5;
-                            color: #24292f;
-                        ">
-                            Here is your verification code:
-                        </p>
+<p>Please don't share this code with anyone.</p>
 
-                        <p th:text="${code}"
-                           style="
-                               margin: 0 0 18px;
-                               font-family: monospace;
-                               font-size: 25px;
-                               line-height: 1.4;
-                               font-weight: 400;
-                               letter-spacing: 5px;
-                               text-align: center;
-                               color: #24292f;
-                           ">
-                            123456
-                        </p>
-
-                        <p style="
-                            margin: 0 0 12px;
-                            font-size: 14px;
-                            line-height: 1.6;
-                            color: #24292f;
-                        ">
-                            This code is valid for
-                            <strong
-                                    th:text="${ttlMinutes} + ' minutes'">
-                                10 minutes
-                            </strong>
-                            and can only be used once.
-                        </p>
-
-                        <p style="
-                            margin: 0 0 10px;
-                            font-size: 14px;
-                            line-height: 1.6;
-                            color: #24292f;
-                        ">
-                            <strong>
-                                Please don't share this code with anyone:
-                            </strong>
-                            we'll never ask for it on the phone or via email.
-                        </p>
-
-                        <p style="
-                            margin: 0;
-                            font-size: 14px;
-                            line-height: 1.6;
-                            color: #24292f;
-                        ">
-                            Thanks,<br>
-                            <span>Wonderwrite</span>
-                            Team
-                        </p>
-
-                    </td>
-                </tr>
-            </table>
-
-            <table role="presentation"
-                   width="100%"
-                   cellpadding="0"
-                   cellspacing="0"
-                   border="0"
-                   style="max-width: 512px;">
-                <tr>
-                    <td style="padding-top: 18px;">
-
-                        <p style="
-                            margin: 0;
-                            font-size: 14px;
-                            line-height: 1.5;
-                            color: #656d76;
-                        ">
-                            You're receiving this email because a
-                            verification code was requested for your
-                            <span>Wonderwrite</span>
-                            account. If this wasn't you, please ignore
-                            this email.
-                        </p>
-
-                    </td>
-                </tr>
-            </table>
-
-        </td>
-    </tr>
-</table>
+<p>
+    Thanks,<br>
+    The <span th:text="${productName}">Product</span> Team
+</p>
 
 </body>
 </html>

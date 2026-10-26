@@ -31,6 +31,7 @@ server:
 app:
   mail:
     from: ${MAIL_FROM:noreply@wonderwrite.local}
+    product-name: ${PRODUCT_NAME:Wonderwrite}
 
   security:
     jwt:
