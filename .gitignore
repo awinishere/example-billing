@@ -1,5 +1,7 @@
 *.class
 
+target/
+
 *.log
 
 *.ctxt

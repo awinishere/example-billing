@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.example.plans.persistence.adapter.PlanRepositoryAdapterTest
--------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.792 s -- in com.example.plans.persistence.adapter.PlanRepositoryAdapterTest
