@@ -1,14 +1,9 @@
-# Normalisasi line ending: repo simpan LF, checkout menyesuaikan OS
 * text=auto
 
-# --- Maven wrapper ---
-# ./mvnw harus LF. Kalau kekonversi CRLF, di Linux/macOS error:
-# "/usr/bin/env: 'bash\r': No such file or directory"
 mvnw text eol=lf
 .mvn/wrapper/maven-wrapper.properties text eol=lf
 mvnw.cmd text eol=crlf
 
-# --- Teks sumber proyek ---
 *.java text eol=lf
 *.xml text eol=lf
 *.yml text eol=lf
@@ -20,7 +15,6 @@ mvnw.cmd text eol=crlf
 .gitattributes text eol=lf
 *.sh text eol=lf
 
-# --- Biner (jangan pernah disentuh git) ---
 *.jar binary
 *.war binary
 *.class binary
