@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -45,6 +46,18 @@ public class RefreshTokenIssuer {
             log.debug("Token family started family={} userId={}", familyId, command.userId());
         }
         return new StartTokenFamilyResult(pair);
+    }
+
+    @Transactional
+    public int revokeAllSessions(UUID userId) {
+        List<RefreshSecret> active = repositories.findByUserIdAndRevokedFalse(userId);
+        active.forEach(RefreshSecret::revoke);
+        repositories.saveAll(active);
+
+        if (log.isDebugEnabled()) {
+            log.debug("All sessions revoked userId={} count={}", userId, active.size());
+        }
+        return active.size();
     }
 
     private static String sha256Hex(String input) {
