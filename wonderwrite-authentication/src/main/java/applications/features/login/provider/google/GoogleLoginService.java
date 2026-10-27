@@ -1,39 +1,53 @@
 package applications.features.login.provider.google;
 
-import applications.features.register.provider.google.GoogleRegisterCommand;
-import applications.features.register.provider.google.GoogleRegisterResult;
-import applications.features.register.provider.google.GoogleRegisterService;
+import applications.domain.entities.Credentials;
+import applications.domain.entities.OAuthCredentials;
+import applications.domain.repositories.CredentialsRepositories;
+import applications.domain.repositories.OAuthCredentialsRepositories;
 import applications.utils.tokens.RefreshTokenIssuer;
 import applications.utils.tokens.StartTokenFamilyCommand;
 import applications.utils.tokens.TokenPair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class GoogleLoginService {
 
-    private final GoogleRegisterService registerService;
+    private static final String PROVIDER = "google";
+
+    private final OAuthCredentialsRepositories oAuthCredentialsRepositories;
+    private final CredentialsRepositories credentialsRepositories;
     private final RefreshTokenIssuer refreshTokenIssuer;
 
     public GoogleLoginResult login(GoogleLoginCommand command) {
-        return switch (registerService.register(
-                new GoogleRegisterCommand(command.providerUserId(), command.email()))) {
+        Optional<OAuthCredentials> link = oAuthCredentialsRepositories
+                .findByProviderAndProviderUserId(PROVIDER, command.providerUserId());
 
-            case GoogleRegisterResult.Failed failed ->
-                    new GoogleLoginResult.Failed(failed.reason());
+        if (link.isEmpty()) {
+            return new GoogleLoginResult.Failed("Unknown Google identity");
+        }
 
-            case GoogleRegisterResult.Success success -> {
-                TokenPair tokens = refreshTokenIssuer.startFamily(
-                        new StartTokenFamilyCommand(
-                                success.id(),
-                                success.email(),
-                                success.role(),
-                                command.fingerprint()
-                        )
-                ).tokens();
-                yield new GoogleLoginResult.Success(success.id(), tokens, success.provisioned());
-            }
-        };
+        Optional<Credentials> account = credentialsRepositories.findById(link.get().getUserId());
+        if (account.isEmpty()) {
+            return new GoogleLoginResult.Failed("OAuth link points at missing account");
+        }
+
+        Credentials credentials = account.get();
+        TokenPair token = refreshTokenIssuer.startFamily(
+                new StartTokenFamilyCommand(
+                        credentials.getId(),
+                        credentials.getEmail(),
+                        credentials.getRole(),
+                        command.fingerprint()
+                )
+        ).tokens();
+        return new GoogleLoginResult.Success(
+                credentials.getId(),
+                token,
+                false
+        );
     }
 }

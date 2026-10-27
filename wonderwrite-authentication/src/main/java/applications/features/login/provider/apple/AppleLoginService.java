@@ -1,39 +1,50 @@
 package applications.features.login.provider.apple;
 
-import applications.features.register.provider.apple.AppleRegisterCommand;
-import applications.features.register.provider.apple.AppleRegisterResult;
-import applications.features.register.provider.apple.AppleRegisterService;
+import applications.domain.entities.Credentials;
+import applications.domain.entities.OAuthCredentials;
+import applications.domain.repositories.CredentialsRepositories;
+import applications.domain.repositories.OAuthCredentialsRepositories;
 import applications.utils.tokens.RefreshTokenIssuer;
 import applications.utils.tokens.StartTokenFamilyCommand;
 import applications.utils.tokens.TokenPair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AppleLoginService {
 
-    private final AppleRegisterService registerService;
+    private static final String PROVIDER = "apple";
+
+    private final OAuthCredentialsRepositories oAuthCredentialsRepositories;
+    private final CredentialsRepositories credentialsRepositories;
     private final RefreshTokenIssuer refreshTokenIssuer;
 
     public AppleLoginResult login(AppleLoginCommand command) {
-        return switch (registerService.register(
-                new AppleRegisterCommand(command.providerUserId(), command.email()))) {
+        Optional<OAuthCredentials> link = oAuthCredentialsRepositories
+                .findByProviderAndProviderUserId(PROVIDER, command.providerUserId());
 
-            case AppleRegisterResult.Failed failed ->
-                    new AppleLoginResult.Failed(failed.reason());
+        if (link.isEmpty()) {
+            return new AppleLoginResult.Failed("Unknown Apple identity");
+        }
 
-            case AppleRegisterResult.Success success -> {
-                TokenPair tokens = refreshTokenIssuer.startFamily(
-                        new StartTokenFamilyCommand(
-                                success.id(),
-                                success.email(),
-                                success.role(),
-                                command.fingerprint()
-                        )
-                ).tokens();
-                yield new AppleLoginResult.Success(success.id(), tokens, success.provisioned());
-            }
-        };
+        Optional<Credentials> account = credentialsRepositories.findById(link.get().getUserId());
+        if (account.isEmpty()) {
+            return new AppleLoginResult.Failed("OAuth link points at missing account");
+        }
+
+        Credentials credentials = account.get();
+        TokenPair tokens = refreshTokenIssuer.startFamily(
+                new StartTokenFamilyCommand(
+                        credentials.getId(),
+                        credentials.getEmail(),
+                        credentials.getRole(),
+                        command.fingerprint()
+                )
+        ).tokens();
+
+        return new AppleLoginResult.Success(credentials.getId(), tokens, false);
     }
 }

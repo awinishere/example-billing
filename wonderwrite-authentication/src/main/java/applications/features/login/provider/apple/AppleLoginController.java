@@ -57,7 +57,7 @@ public class AppleLoginController {
                             examples = @ExampleObject(name = "authenticated", value = """
                                     {
                                         "id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",
-                                        "provisioned":true
+                                        "provisioned":false
                                     }
                                     """))),
             @ApiResponse(responseCode = "400", description = "Validation failed (blank providerUserId, malformed email)",
