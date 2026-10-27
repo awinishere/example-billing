@@ -1,0 +1,23 @@
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enabled: false
+
+  flyway:
+    enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+app:
+  mail:
+    from: dev@wonderwrite.local

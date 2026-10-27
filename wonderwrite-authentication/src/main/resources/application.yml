@@ -1,0 +1,76 @@
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: wonderwrite-authentication
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    locations: classpath:migrations
+    schemas: private_identity
+    default-schema: private_identity
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:25}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  mail:
+    from: ${MAIL_FROM:noreply@wonderwrite.local}
+    product-name: ${PRODUCT_NAME:Wonderwrite}
+
+  security:
+    jwt:
+      private-key-path: ${JWT_PRIVATE_KEY_PATH}
+      public-key-path: ${JWT_PUBLIC_KEY_PATH}
+      access-token-ttl: ${JWT_ACCESS_TTL:PT15M}
+      refresh-token-ttl: ${JWT_REFRESH_TTL:P7D}
+      issuer: ${JWT_ISSUER:wonderwrite}
+
+    otp:
+      ttl: ${OTP_TTL:PT5M}
+      resend-gap: ${OTP_RESEND_GAP:PT1M}
+      max-attempts: ${OTP_MAX_ATTEMPTS:3}
+      code-length: ${OTP_CODE_LENGTH:6}
+
+    login:
+      max-failed-per-email: ${LOGIN_MAX_FAILED_PER_EMAIL:5}
+      email-lockout: ${LOGIN_EMAIL_LOCKOUT:PT15M}
+      max-attempts-per-ip: ${LOGIN_MAX_ATTEMPTS_PER_IP:20}
+      ip-rate-window: ${LOGIN_IP_RATE_WINDOW:PT1M}
+
+    oauth:
+      success-url: ${OAUTH_SUCCESS_URL:/}
+      failure-url: ${OAUTH_FAILURE_URL:/login?error=oauth}
+      google:
+        enabled: ${OAUTH_GOOGLE_ENABLED:false}
+        client-id: ${OAUTH_GOOGLE_CLIENT_ID:}
+        client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET:}
+      apple:
+        enabled: ${OAUTH_APPLE_ENABLED:false}
+        client-id: ${OAUTH_APPLE_CLIENT_ID:}
+        team-id: ${OAUTH_APPLE_TEAM_ID:}
+        key-id: ${OAUTH_APPLE_KEY_ID:}
+        private-key-pem: ${OAUTH_APPLE_PRIVATE_KEY_PEM:}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+scalar:
+  path: /docs
+  page-title: Wonderwrite Authentication API
