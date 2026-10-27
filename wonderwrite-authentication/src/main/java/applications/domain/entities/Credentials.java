@@ -19,7 +19,8 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
-@Table(schema = "private_identity", name = "credentials")
+@Table(schema = "private_identity", name = "credentials",
+        uniqueConstraints = @UniqueConstraint(name = "uq_credentials_email", columnNames = "email"))
 public class Credentials {
 
     @Id

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +21,9 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
-@Table(schema = "private_identity", name = "oauth_credentials")
+@Table(schema = "private_identity", name = "oauth_credentials",
+        uniqueConstraints = @UniqueConstraint(name = "uq_oauth_credentials_provider_identity",
+                columnNames = {"provider", "provider_user_id"}))
 public class OAuthCredentials {
 
     @Id
