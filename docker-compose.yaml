@@ -11,5 +11,12 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data
 
+  mailcatcher:
+    image: mailhog/mailhog
+    container_name: dev-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 volumes:
   database_data:
